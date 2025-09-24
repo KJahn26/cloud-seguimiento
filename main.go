@@ -31,7 +31,7 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		if r.Method == http.MethodPost {
+		if r.Method == http.MethodGet {
 			hostname, _ := os.Hostname()
 			w.Header().Set("Content-type", "application/json")
 			json.NewEncoder(w).Encode(map[string]string{"hostname": hostname, "port": port, "images": ""})
