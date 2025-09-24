@@ -1,22 +1,33 @@
 package main
 
 import (
-	"encoding/json"
-	"html/template"
+	"fmt"
 	"log"
+	"net"
 	"net/http"
 )
 
 func main() {
-	http.HandleFunc("/image", func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		json.NewEncoder(w).Encode(r.Body)
-	})
+	var port string
+	var addr string
 
-	log.Fatal(http.ListenAndServe(":9097", nil))
-}
+	for {
+		fmt.Print("Ingrese el puerto que desea utilizar (ej:8000): ")
+		fmt.Scan(&port)
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
-	tmpl.Execute(w, nil)
+		// Probar si el puerto está disponible
+		ln, err := net.Listen("tcp", ":"+addr)
+		if err != nil {
+			fmt.Printf("El puerto %s está en uso o no tienes permisos ❌\n", port)
+			continue
+		}
+
+		// Puerto libre → cerramos el listener temporal y salimos del loop
+		ln.Close()
+		fmt.Printf("El servidor esta escuchando el puerto %s ✅\n", port)
+		break
+	}
+
+	// Levantar servidor HTTP en el puerto elegido
+	log.Fatal(http.ListenAndServe(":"+addr, nil))
 }
