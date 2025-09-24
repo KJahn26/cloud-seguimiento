@@ -30,9 +30,14 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		hostname, _ := os.Hostname()
-		w.Header().Set("Content-type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"hostname": hostname, "port": port})
+		defer r.Body.Close()
+		if r.Method == http.MethodPost {
+			hostname, _ := os.Hostname()
+			w.Header().Set("Content-type", "application/json")
+			json.NewEncoder(w).Encode(map[string]string{"hostname": hostname, "port": port, "images": ""})
+		} else {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
 	})
 
 	// Levantar servidor HTTP en el puerto elegido
