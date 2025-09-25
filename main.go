@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// respuesta del servidor a solicitud
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/index", func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
 		//metodo get para enviarle un json
@@ -65,9 +65,16 @@ func main() {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})
+	//cargamos la pagina
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "template/index.html")
+	})
 
 	// Levantar servidor HTTP en el puerto elegido
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+
+	//cargamos imagensita de la nube
+	http.Handle("/template/", http.StripPrefix("/template/", http.FileServer(http.Dir("template"))))
 
 }
 
