@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+    .card-img-top {
+        height: 150px;      
+        object-fit: cover;   
+    }
+</style>
+
 </head>
 <body>
 
@@ -13,17 +20,19 @@
         <a class="navbar-brand text-white" href="#">
         Servidor de imagenes
         </a>
-        <img src="image/image.png" alt="Logo" width="80" height="70" class="d-inline-block align-text-top">
+        <img src="template/image.png" alt="Logo" width="80" height="70" class="d-inline-block align-text-top">
     </div>
     </nav>
 
     <div class="container my-4">
-    <h5 class="text-muted">Hostname: DESKTOP-IOKOTP6</h5>
+    <h5 id="hostname" class="text-muted">Hostname: </h5>
     <h3 class="fw-bold">Tema: Lugares emblemáticos del mundo</h3>
     </div>
 
-    <div class="container" style="margin-bottom: 120px;">
-    aqui van imagenes... laburanding
+    <div class="container px-2" style="margin-bottom: 80px;">
+        <div class="row" id="galeria">
+        <!-- Aquí se insertan las columnas con imágenes -->
+        </div>
     </div>
 
     <footer class="text-white py-4 px-3" style="background-color: #000000; font-size: 22px; position: fixed; bottom: 0; width: 100%;">
@@ -36,6 +45,29 @@
     </div>
     </footer>
 
+    <script>
+        fetch('/index')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('hostname').textContent = 'hostname: ' + data.hostname;
+            const galeria = document.getElementById('galeria');
+            galeria.innerHTML = ''; // Limpiar por si se recarga
+
+            data.images.forEach((img, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-6 mb-3';
+            col.innerHTML = `
+                <div class="card h-100">
+                <img src="${img.base64}" class="card-img-top" id="img-${index}" alt="${img.filename}">
+                <div class="card-body">
+                    <p class="card-text text-center">${img.filename}</p>
+                </div>
+                </div>
+            `;
+            galeria.appendChild(col);
+            });
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
